@@ -12,7 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Behind a reverse proxy / load balancer that terminates HTTPS: trust its X-Forwarded-* headers
+        $middleware->trustProxies(at: env('TRUSTED_PROXIES', '*'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
