@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class EsgFile extends Model
 {
@@ -24,6 +25,15 @@ class EsgFile extends Model
         return $this->total_rows > 0
             ? round(min(100, $this->processed_rows / $this->total_rows * 100), 1)
             : 0;
+    }
+
+    /** The result file is complete (export finished) and not empty. */
+    public function hasDownload(): bool
+    {
+        return $this->status === 'done'
+            && $this->output_path
+            && Storage::exists($this->output_path)
+            && Storage::size($this->output_path) > 0;
     }
 
     public function isRunning(): bool

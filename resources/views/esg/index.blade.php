@@ -74,7 +74,7 @@
                         <div class="muted" data-eta></div>
                     </td>
                     <td class="actions">
-                        <a class="btn" data-download href="{{ $f->output_path ? route('esg.download', $f) : '#' }}" style="{{ $f->output_path ? '' : 'display:none' }}">Download</a>
+                        <a class="btn" data-download href="{{ $f->hasDownload() ? route('esg.download', $f) : '#' }}" style="{{ $f->hasDownload() ? '' : 'display:none' }}">Download</a>
                         <form method="post" action="{{ route('esg.resume', $f) }}" data-resume style="{{ $f->isRunning() ? 'display:none' : '' }}">
                             @csrf <button class="btn light" title="Proses ulang baris yang belum terklasifikasi">Lanjutkan</button>
                         </form>
@@ -117,7 +117,7 @@ async function poll() {
             tr.querySelector('[data-error]').textContent = f.error || '';
             tr.querySelector('[data-resume]').style.display = running ? 'none' : '';
             const dl = tr.querySelector('[data-download]');
-            if (f.download) { dl.href = f.download; dl.style.display = ''; }
+            if (f.download) { dl.href = f.download; dl.style.display = ''; } else { dl.style.display = 'none'; }
             if (!running && !summaryLoaded.has(f.id) && f.total) { summaryLoaded.add(f.id); loadSummary(tr, f.id); }
         }
     } catch (e) {}

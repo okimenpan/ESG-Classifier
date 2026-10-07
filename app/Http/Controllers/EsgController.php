@@ -45,7 +45,7 @@ class EsgController extends Controller
             'percent' => $f->progressPercent(),
             'error' => $f->error,
             'eta' => $this->eta($f),
-            'download' => $f->output_path ? route('esg.download', $f) : null,
+            'download' => $f->hasDownload() ? route('esg.download', $f) : null,
         ]);
     }
 
@@ -57,9 +57,11 @@ class EsgController extends Controller
 
     public function download(EsgFile $file)
     {
-        abort_unless($file->output_path && Storage::exists($file->output_path), 404);
+        abort_unless($file->hasDownload(), 404, 'File hasil belum tersedia.');
 
-        return Storage::download($file->output_path);
+        // BinaryFileResponse streams in small chunks; Storage::download() uses fpassthru,
+        // which loads the whole file into memory (fails for result files > memory_limit)
+        return response()->download(Storage::path($file->output_path), basename($file->output_path));
     }
 
     /** Resume: process again only the rows that have no category yet. */

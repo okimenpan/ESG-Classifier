@@ -86,6 +86,7 @@ class ExportResultJob implements ShouldQueue
 
         $file->update([
             'status' => 'done',
+            'error' => null,
             'output_path' => $outRel,
             'finished_at' => now(),
         ]);
